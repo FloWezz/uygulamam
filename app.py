@@ -152,7 +152,9 @@ else:
                 # Sona Kardiyo/Yağ yakıcı ekle
                 program_listesi.append(f"🏃‍♂️ Kapanış: {random.choice(hareketler_kardiyo)} - 15 Dakika")
                 
-            st.session_state.gecici_program = "\n".join(program_listesi)
+            
+        # Programı aralarına iki satır boşluk koyarak birleştir (Alt alta düzgün görünmesi için)
+        st.session_state.gecici_program = "\n\n".join(program_listesi)
             
         # Programı Ekranda Gösterme ve Kaydetme
         if 'gecici_program' in st.session_state and st.session_state.gecici_program != "":
@@ -171,11 +173,17 @@ else:
         # --- GEÇMİŞ TABLOSU ---
         st.divider()
         st.subheader("📅 Antrenman Geçmişim")
-        gecmis_df = pd.read_sql_query("SELECT tarih as Tarih, program_detayi as Program FROM antrenman_gecmisi WHERE kullanici_adi=? ORDER BY Tarih DESC", conn, params=(kullanici,))
         
-        if not gecmis_df.empty:
-            st.dataframe(gecmis_df, use_container_width=True)
+        # Veritabanından geçmişi liste olarak çek
+        c.execute("SELECT tarih, program_detayi FROM antrenman_gecmisi WHERE kullanici_adi=? ORDER BY tarih DESC", (kullanici,))
+        gecmis_kayitlar = c.fetchall()
+        
+        if gecmis_kayitlar:
+            for tarih, program in gecmis_kayitlar:
+                # Her bir tarih için açılır-kapanır şık bir kutu (expander) oluştur
+                with st.expander(f"🗓️ {tarih} Tarihli Antrenmanın"):
+                    st.markdown(program) # Hareketleri formatlı ve alt alta göster
         else:
-            st.write("Henüz kaydedilmiş bir antrenmanın yok. İlk programını üretip kaydet!")
+            st.info("Henüz kaydedilmiş bir antrenmanın yok. İlk programını üretip kaydet!")
             
         conn.close()
