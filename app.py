@@ -152,9 +152,7 @@ else:
                 # Sona Kardiyo/Yağ yakıcı ekle
                 program_listesi.append(f"🏃‍♂️ Kapanış: {random.choice(hareketler_kardiyo)} - 15 Dakika")
                 
-            
-        # Programı aralarına iki satır boşluk koyarak birleştir (Alt alta düzgün görünmesi için)
-        st.session_state.gecici_program = "\n\n".join(program_listesi)
+            st.session_state.gecici_program = "\n\n".join(program_listesi)
             
         # Programı Ekranda Gösterme ve Kaydetme
         if 'gecici_program' in st.session_state and st.session_state.gecici_program != "":
